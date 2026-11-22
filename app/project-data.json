@@ -1,0 +1,36 @@
+{
+  "projects": [
+    {
+      "name": "Community Handbook",
+      "owner": "Alex Rivera",
+      "status": "On Track",
+      "recentActivity": "Updated contributor onboarding guidance yesterday",
+      "priority": "Medium",
+      "summary": "A shared guide for contributor setup, expectations, and common review workflows."
+    },
+    {
+      "name": "Accessibility Audit",
+      "owner": "Priya Shah",
+      "status": "In Progress",
+      "recentActivity": "Keyboard navigation findings were triaged this morning",
+      "priority": "High",
+      "summary": "Audits key interface flows and tracks fixes that improve accessibility for everyone."
+    },
+    {
+      "name": "Release Notes Assistant",
+      "owner": "Morgan Lee",
+      "status": "At Risk",
+      "recentActivity": "Draft review blocked by unresolved template questions",
+      "priority": "High",
+      "summary": "Improves the release-note drafting process while keeping maintainers in control."
+    },
+    {
+      "name": "Documentation Samples",
+      "owner": "Jamie Chen",
+      "status": "Completed",
+      "recentActivity": "Published a new set of examples last Friday",
+      "priority": "Low",
+      "summary": "Provides approachable examples that help contributors use project features quickly."
+    }
+  ]
+}

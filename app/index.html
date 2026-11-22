@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard" aria-labelledby="dashboard-title">
+      <header class="dashboard-header">
+        <div>
+          <h1 id="dashboard-title">Project Pulse</h1>
+          <p>Illustrative project updates for contributor-friendly planning.</p>
+        </div>
+      </header>
+
+      <p id="loading-state" role="status" aria-live="polite">Loading projects…</p>
+      <p id="empty-state" role="status" hidden>No projects are available.</p>
+      <p id="error-state" role="alert" hidden>Unable to load project data. Please try again later.</p>
+      <section id="project-grid" class="project-grid" aria-label="Projects" hidden></section>
+    </main>
+
+    <script>
+      const loadingState = document.querySelector("#loading-state");
+      const emptyState = document.querySelector("#empty-state");
+      const errorState = document.querySelector("#error-state");
+      const projectGrid = document.querySelector("#project-grid");
+
+      function slug(value) {
+        return String(value).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      }
+
+      function createBadge(className, value) {
+        const badge = document.createElement("span");
+        badge.className = `${className} ${className}--${slug(value)}`;
+        badge.textContent = value;
+        return badge;
+      }
+
+      function createProjectCard(project) {
+        const card = document.createElement("article");
+        card.className = "project-card";
+
+        const header = document.createElement("header");
+        header.className = "project-card__header";
+
+        const title = document.createElement("h2");
+        title.textContent = project.name;
+
+        header.append(title, createBadge("status-badge", project.status));
+
+        const meta = document.createElement("div");
+        meta.className = "project-card__meta";
+        meta.append(document.createTextNode("Owner: "));
+        const owner = document.createElement("strong");
+        owner.className = "project-card__owner";
+        owner.textContent = project.owner;
+        meta.append(owner, createBadge("priority-badge", project.priority));
+
+        const summary = document.createElement("p");
+        summary.className = "project-card__summary";
+        summary.textContent = project.summary;
+
+        const activity = document.createElement("div");
+        activity.className = "project-card__activity";
+        const activityLabel = document.createElement("span");
+        activityLabel.className = "project-card__activity-label";
+        activityLabel.textContent = "Recent activity";
+        const activityValue = document.createElement("span");
+        activityValue.textContent = project.recentActivity;
+        activity.append(activityLabel, activityValue);
+
+        card.append(header, meta, summary, activity);
+        return card;
+      }
+
+      async function loadProjects() {
+        loadingState.hidden = false;
+        emptyState.hidden = true;
+        errorState.hidden = true;
+        projectGrid.hidden = true;
+
+        try {
+          const response = await fetch("project-data.json", { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error(`Unable to load project data (${response.status})`);
+          }
+
+          const data = await response.json();
+          if (!data || !Array.isArray(data.projects)) {
+            throw new Error("Project data has an invalid structure");
+          }
+
+          loadingState.hidden = true;
+          if (data.projects.length === 0) {
+            emptyState.hidden = false;
+            return;
+          }
+
+          projectGrid.replaceChildren(...data.projects.map(createProjectCard));
+          projectGrid.hidden = false;
+        } catch (error) {
+          loadingState.hidden = true;
+          errorState.hidden = false;
+          console.error(error);
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>
